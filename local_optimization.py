@@ -45,7 +45,24 @@ def hill_climbing(func, bounds, iterations=1000, epsilon=1e-6):
 
 # Random Local Search
 def random_local_search(func, bounds, iterations=1000, epsilon=1e-6):
-    pass
+    def get_random_neighbor(current, step_size=0.5):
+        x, y = current
+        new_x = x + random.uniform(-step_size, step_size)
+        new_y = y + random.uniform(-step_size, step_size)
+        return [new_x, new_y]
+
+    current_point = [random.uniform(*bounds[0]), random.uniform(*bounds[1])]
+    current_value = func(current_point)
+    probability = 0.2
+
+    for _ in range(iterations):
+        new_point = get_random_neighbor(current_point, epsilon)
+        new_value = func(new_point)
+
+        if new_value < current_value or random.random() < probability:
+            current_point, current_value = new_point, new_value
+
+    return current_point, current_value
 
 
 # Simulated Annealing
@@ -64,9 +81,9 @@ if __name__ == "__main__":
     hc_solution, hc_value = hill_climbing(sphere_function, bounds)
     print("Solution:", hc_solution, "Value:", hc_value)
 
-    # print("\nRandom Local Search:")
-    # rls_solution, rls_value = random_local_search(sphere_function, bounds)
-    # print("Solution:", rls_solution, "Value:", rls_value)
+    print("\nRandom Local Search:")
+    rls_solution, rls_value = random_local_search(sphere_function, bounds)
+    print("Solution:", rls_solution, "Value:", rls_value)
 
     # print("\nSimulated Annealing:")
     # sa_solution, sa_value = simulated_annealing(sphere_function, bounds)
