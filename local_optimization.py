@@ -69,7 +69,28 @@ def random_local_search(func, bounds, iterations=1000, epsilon=1e-6):
 def simulated_annealing(
     func, bounds, iterations=1000, temp=1000, cooling_rate=0.95, epsilon=1e-6
 ):
-    pass
+
+    def generate_neighbor(solution):
+        x, y = solution
+        new_x = x + random.uniform(-1, 1)
+        new_y = y + random.uniform(-1, 1)
+        return [new_x, new_y]
+
+    current_solution = [random.uniform(*bounds[0]), random.uniform(*bounds[1])]
+    current_energy = func(current_solution)
+
+    while temp > 0.001:
+        new_solution = generate_neighbor(current_solution)
+        new_energy = func(new_solution)
+        delta_energy = new_energy - current_energy
+
+        if delta_energy < 0 or random.random() < math.exp(-delta_energy / temp):
+            current_solution = new_solution
+            current_energy = new_energy
+
+        temp *= cooling_rate
+
+    return current_solution, current_energy
 
 
 if __name__ == "__main__":
@@ -85,6 +106,6 @@ if __name__ == "__main__":
     rls_solution, rls_value = random_local_search(sphere_function, bounds)
     print("Solution:", rls_solution, "Value:", rls_value)
 
-    # print("\nSimulated Annealing:")
-    # sa_solution, sa_value = simulated_annealing(sphere_function, bounds)
-    # print("Solution:", sa_solution, "Value:", sa_value)
+    print("\nSimulated Annealing:")
+    sa_solution, sa_value = simulated_annealing(sphere_function, bounds)
+    print("Solution:", sa_solution, "Value:", sa_value)
